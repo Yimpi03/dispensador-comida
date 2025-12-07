@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
   <title>Dispensador de Comida</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body{font-family:Arial;text-align:center;padding-top:50px;}
+    button{font-size:28px;padding:20px 30px;border-radius:8px;}
+  </style>
 </head>
-<body style="text-align:center; font-family:Arial;">
+<body>
+  <h1>Dispensador de Comida</h1>
+  <button id="btn">DAR COMIDA</button>
 
-<h1>Control de Comida</h1>
+  <script>
+    const FIREBASE_URL = "https://davidobil-231bf-default-rtdb.firebaseio.com/comida.json";
 
-<button onclick="activar()" style="font-size:30px; padding:20px;">
-DAR COMIDA
-</button>
-
-<script>
-function activar() {
-  fetch("comida.txt", {
-    method: "POST",
-    body: "1"
-  });
-  alert("✅ Comida enviada");
-}
-</script>
-
+    document.getElementById('btn').addEventListener('click', async () => {
+      try {
+        // escribir 1 en /comida
+        const res = await fetch(FIREBASE_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(1)
+        });
+        if (res.ok) {
+          alert('✅ Comida solicitada');
+        } else {
+          alert('Error al enviar la orden');
+        }
+      } catch (e) {
+        alert('Error de red: ' + e);
+      }
+    });
+  </script>
 </body>
 </html>
