@@ -2,24 +2,51 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Dispensador de Comida2.0</title>
+  <title>Dispensador de Comida Seguro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    * { box-sizing: border-box; }
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 50px;
-      background: #f0f8ff;
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 50px 20px;
     }
     h1 {
-      color: #333;
-      margin-bottom: 40px;
+      font-size: 3em;
+      margin-bottom: 20px;
+      color: #fff;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    }
+    .card {
+      background: rgba(255,255,255,0.95);
+      padding: 30px 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+    input[type="password"] {
+      width: 80%;
+      padding: 12px;
+      margin: 15px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
     }
     button {
-      font-size: 28px;
-      padding: 20px 40px;
-      border-radius: 10px;
+      font-size: 1.2em;
+      padding: 15px 30px;
       border: none;
+      border-radius: 10px;
       background-color: #4CAF50;
       color: white;
       cursor: pointer;
@@ -29,38 +56,56 @@
       background-color: #45a049;
     }
     #status {
-      margin-top: 30px;
-      font-size: 20px;
-      color: #555;
+      margin-top: 20px;
+      font-size: 1em;
+      color: #333;
     }
   </style>
 </head>
 <body>
   <h1>Dispensador de Comida</h1>
-  <button id="btn">DAR COMIDA</button>
-  <div id="status">Estado: esperando acción...</div>
+  <div class="card">
+    <p>Introduce la contraseña para activar el dispensador:</p>
+    <input type="password" id="pass" placeholder="Contraseña">
+    <br>
+    <button id="btn">DAR COMIDA</button>
+    <div id="status">Estado: esperando acción...</div>
+  </div>
 
   <script>
     const FIREBASE_URL = "https://davidobil-231bf-default-rtdb.firebaseio.com/comida.json";
-
+    const PASSWORD = "1234"; // 🔒 Cambia esta contraseña a la que quieras
     const statusDiv = document.getElementById('status');
     const button = document.getElementById('btn');
+    const inputPass = document.getElementById('pass');
 
     button.addEventListener('click', async () => {
-      statusDiv.textContent = "Enviando orden...";
+      const pass = inputPass.value;
+      if(pass !== PASSWORD){
+        statusDiv.textContent = "❌ Contraseña incorrecta";
+        statusDiv.style.color = "#d9534f";
+        return;
+      }
+
+      statusDiv.textContent = "⏳ Enviando orden...";
+      statusDiv.style.color = "#333";
+
       try {
         const res = await fetch(FIREBASE_URL, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(1) // envia 1 a Firebase
+          body: JSON.stringify(1)
         });
         if (res.ok) {
           statusDiv.textContent = "✅ Orden enviada, el servo debería activarse!";
+          statusDiv.style.color = "#4CAF50";
         } else {
           statusDiv.textContent = "❌ Error al enviar la orden, intenta de nuevo.";
+          statusDiv.style.color = "#d9534f";
         }
       } catch (e) {
         statusDiv.textContent = "❌ Error de red: " + e;
+        statusDiv.style.color = "#d9534f";
       }
     });
 
@@ -70,8 +115,10 @@
         const res = await fetch(FIREBASE_URL);
         const valor = await res.json();
         statusDiv.textContent = `Estado actual en Firebase: ${valor}`;
+        statusDiv.style.color = "#333";
       } catch (e) {
         statusDiv.textContent = "Error al leer estado: " + e;
+        statusDiv.style.color = "#d9534f";
       }
     }
 
