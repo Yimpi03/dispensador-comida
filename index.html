@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Dispensador de Comida</title>
+</head>
+<body style="text-align:center; font-family:Arial;">
+
+<h1>Control de Comida</h1>
+
+<button onclick="activar()" style="font-size:30px; padding:20px;">
+DAR COMIDA
+</button>
+
+<script>
+function activar() {
+  fetch("comida.txt", {
+    method: "POST",
+    body: "1"
+  });
+  alert("✅ Comida enviada");
+}
+</script>
+
+</body>
+</html>
